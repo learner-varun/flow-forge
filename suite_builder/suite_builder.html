@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="corporate">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlowForge</title>
+  <meta name="description" content="Visual builder for API testing suites compatible with Python API Automation Framework. Configure endpoints, assertions, and variables with a dynamic dependency mapper.">
+  
+  <!-- Google Fonts Plus Jakarta Sans, Be Vietnam Pro, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS & daisyUI CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Be Vietnam Pro"', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            heading: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          fontSize: {
+            'headline-xl': ['40px', { lineHeight: '48px', letterSpacing: '-0.02em', fontWeight: '800' }],
+            'headline-lg': ['32px', { lineHeight: '40px', letterSpacing: '-0.01em', fontWeight: '700' }],
+            'headline-lg-mobile': ['28px', { lineHeight: '36px', fontWeight: '700' }],
+            'headline-md': ['24px', { lineHeight: '32px', fontWeight: '700' }],
+            'body-lg': ['18px', { lineHeight: '28px', fontWeight: '400' }],
+            'body-md': ['16px', { lineHeight: '24px', fontWeight: '400' }],
+            'label-md': ['14px', { lineHeight: '20px', letterSpacing: '0.05em', fontWeight: '600' }],
+            'label-sm': ['12px', { lineHeight: '16px', fontWeight: '500' }],
+          },
+          borderRadius: {
+            'sm': '0.25rem',
+            'DEFAULT': '0.5rem',
+            'md': '0.75rem',
+            'lg': '1rem',
+            'xl': '1.5rem',
+            'full': '9999px',
+          },
+          spacing: {
+            'xs': '4px',
+            'base': '8px',
+            'sm': '12px',
+            'gutter': '16px',
+            'md': '20px',
+            'lg': '32px',
+            'xl': '48px',
+            'container-margin': '20px',
+          },
+          colors: {
+            surface: '#f9f9ff',
+            'surface-dim': '#cfdaf2',
+            'surface-bright': '#f9f9ff',
+            'surface-container-lowest': '#ffffff',
+            'surface-container-low': '#f0f3ff',
+            'surface-container': '#e7eeff',
+            'surface-container-high': '#dee8ff',
+            'surface-container-highest': '#d8e3fb',
+            'on-surface': '#111c2d',
+            'on-surface-variant': '#3c4a3d',
+            'inverse-surface': '#263143',
+            'inverse-on-surface': '#ecf1ff',
+            outline: '#6c7b6c',
+            'outline-variant': '#bbcbba',
+            'surface-tint': '#006d34',
+            primary: '#006d34',
+            'on-primary': '#ffffff',
+            'primary-container': '#00d26a',
+            'on-primary-container': '#005426',
+            'inverse-primary': '#2fe378',
+            secondary: '#0058be',
+            'on-secondary': '#ffffff',
+            'secondary-container': '#2170e4',
+            'on-secondary-container': '#fefcff',
+            tertiary: '#9f4200',
+            'on-tertiary': '#ffffff',
+            'tertiary-container': '#ff9f6d',
+            'on-tertiary-container': '#7b3100',
+            error: '#ba1a1a',
+            'on-error': '#ffffff',
+            'error-container': '#ffdad6',
+            'on-error-container': '#93000a',
+            background: '#f9f9ff',
+            'on-background': '#111c2d',
+            'surface-variant': '#d8e3fb',
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Custom Scroller/Drawer styles -->
+  <link rel="stylesheet" href="suite_builder.css">
+</head>
+<body class="bg-transparent text-base-content min-h-screen flex flex-col font-sans">
+  <!-- Fixed Grid and Drifting Background Blobs -->
+  <div class="bg-grid"></div>
+  <div class="bg-blob-1"></div>
+  <div class="bg-blob-2"></div>
+
+  <!-- Header Section -->
+  <header class="navbar bg-base-100 border-b border-base-200 px-6 py-2 gap-4 sticky top-0 z-40 shadow-sm">
+    <div class="flex-1 gap-2">
+      <div class="w-8 h-8 bg-gradient-to-br from-primary-container to-primary text-white rounded-lg flex items-center justify-center font-extrabold text-lg shadow-md font-heading">
+        ⚡
+      </div>
+      <div>
+        <h1 class="text-label-md font-extrabold leading-tight tracking-tight font-heading text-on-surface">FlowForge</h1>
+        <p class="text-label-sm text-base-content/50 uppercase tracking-wider font-semibold">Visually design the API Test</p>
+      </div>
+    </div>
+    
+    <div class="flex-none gap-2">
+      <button class="btn btn-ghost btn-sm gap-1 text-error" id="btn-reset-flow" title="Reset all data and start over">
+        <span>🗑️</span> Reset Flow
+      </button>
+      
+      <button class="btn btn-ghost btn-sm gap-1" id="btn-settings" title="Edit Suite Configuration">
+        <span>⚙️</span> Settings
+      </button>
+      
+      <label class="btn btn-ghost btn-sm gap-1 cursor-pointer" title="Import Suite JSON File">
+        <span>📥</span> Import JSON
+        <input type="file" id="btn-import-file" accept=".json" class="hidden">
+      </label>
+      
+      <button class="btn btn-ghost btn-sm gap-1" id="btn-copy-json" title="Copy Suite JSON to Clipboard">
+        <span>📋</span> Copy JSON
+      </button>
+      
+      <button class="btn btn-primary btn-sm gap-1" id="btn-download-json" title="Download Suite JSON File">
+        <span>💾</span> Export JSON
+      </button>
+
+      <button class="btn btn-outline btn-primary btn-sm gap-1" id="btn-toggle-json" title="Show Live JSON Code Preview">
+        <span>👁️</span> Live JSON
+      </button>
+    </div>
+  </header>
+
+  <!-- App Layout Container (Desktop max-width is set to 1140px per design system focus grid) -->
+  <div class="flex-1 flex flex-col lg:flex-row gap-lg p-container-margin max-w-[1140px] mx-auto w-full">
+    
+    <!-- Left Column: Case Cards and Add Button -->
+    <main class="flex-1 flex flex-col gap-lg min-w-0">
+      
+      <!-- Suite Meta Header -->
+      <div class="card card-compact bg-base-100 border border-base-200 shadow-sm p-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-sm">
+        <div>
+          <h2 class="text-base font-bold text-base-content font-heading" id="display-suite-name">
+            Untitled Suite
+          </h2>
+          <p class="text-xs text-base-content/50 mt-0.5">
+            Test Suite configurations and assertions flow.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-1.5" id="suite-meta-tags">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+      
+      <!-- List of API case cards -->
+      <div class="flex flex-col gap-4" id="cases-list">
+        <!-- Populated dynamically -->
+      </div>
+      
+      <!-- Add new API Card triggers -->
+      <div class="flex flex-col sm:flex-row gap-3 mt-2">
+        <button class="btn btn-outline btn-primary flex-1 font-heading text-xs font-extrabold shadow-sm" id="btn-add-case">
+          ➕ Add API Case Card
+        </button>
+        <button class="btn btn-outline btn-secondary flex-1 font-heading text-xs font-extrabold shadow-sm" id="btn-import-curl">
+          ⚡ Import from cURL
+        </button>
+      </div>
+    </main>
+    
+    <!-- Right Sidebar: Variables Tracker & Validation warnings -->
+    <aside class="w-full lg:w-80 flex-shrink-0">
+      <div class="card card-compact bg-base-100 border border-base-200 shadow-sm p-4 sticky top-[88px] flex flex-col gap-4 max-h-[calc(100vh-120px)] overflow-y-auto">
+        <div class="flex justify-between items-center pb-2 border-b border-base-200">
+          <span class="text-xs font-bold uppercase tracking-wider text-base-content/60 font-heading">Variables Tracker</span>
+          <span class="badge badge-sm badge-neutral font-medium">Context</span>
+        </div>
+        <p class="text-xs text-base-content/60 leading-relaxed">
+          Variables are extracted using response JSON paths (e.g. <code>$.data.token</code>) and consumed downstream via <code>{{variable_name}}</code> placeholders.
+        </p>
+        <div class="divider my-0 h-px"></div>
+        
+        <!-- Live list of variables -->
+        <div class="flex flex-col gap-3" id="variables-list">
+          <!-- Dynamic variables and warnings populated here -->
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Settings Modal (Glassmorphic) -->
+  <div class="modal modal-middle" id="settings-modal">
+    <div class="modal-box modal-box-glass max-w-xl shadow-2xl p-0 overflow-hidden">
+      <div class="flex justify-between items-center px-6 py-4 border-b border-base-content/10">
+        <h2 class="text-sm font-bold uppercase tracking-wider text-base-content font-heading">Suite Global Settings</h2>
+        <button class="btn btn-ghost btn-sm btn-circle text-lg" id="settings-close">✕</button>
+      </div>
+      <form id="settings-form" autocomplete="off">
+        <div class="p-6 flex flex-col gap-4 max-h-[70vh] overflow-y-auto">
+          <div class="form-control w-full">
+            <label class="label py-1"><span class="label-text text-xs font-bold uppercase tracking-wider text-base-content/60">Suite Name</span></label>
+            <input type="text" id="modal-suite-name" class="input input-bordered input-sm w-full font-medium" required placeholder="e.g. Production Suite">
+          </div>
+          
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-control w-full">
+              <label class="label py-1"><span class="label-text text-xs font-bold uppercase tracking-wider text-base-content/60">Environment</span></label>
+              <input type="text" id="modal-suite-env" class="input input-bordered input-sm w-full font-medium" required placeholder="e.g. demo, staging, prod">
+            </div>
+            
+            <div class="form-control w-full">
+              <label class="label py-1"><span class="label-text text-xs font-bold uppercase tracking-wider text-base-content/60">Timeout (Seconds)</span></label>
+              <input type="number" id="modal-suite-timeout" class="input input-bordered input-sm w-full font-medium" required min="1" max="120" placeholder="10">
+            </div>
+          </div>
+          
+          <div class="form-control w-full">
+            <label class="label py-1"><span class="label-text text-xs font-bold uppercase tracking-wider text-base-content/60">Base URL</span></label>
+            <input type="url" id="modal-suite-base" class="input input-bordered input-sm w-full font-medium" required placeholder="https://api.example.com">
+          </div>
+          
+          <div class="flex items-center justify-between p-3 bg-base-200 rounded-lg border border-base-300">
+            <div class="flex flex-col">
+              <span class="text-xs font-bold">Verify SSL Certificates</span>
+              <span class="text-[10px] text-base-content/50">Disable only for local development self-signed HTTPS</span>
+            </div>
+            <input type="checkbox" id="modal-suite-ssl" class="toggle toggle-primary toggle-sm" checked>
+          </div>
+          
+          <div class="mt-2 pt-4 border-t border-base-200">
+            <h3 class="text-[10px] uppercase font-bold text-base-content/50 tracking-wider mb-3">Default Case Parameters</h3>
+            
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-control w-full">
+                <label class="label py-1"><span class="label-text text-xs font-bold uppercase tracking-wider text-base-content/60">Default Repeats</span></label>
+                <input type="number" id="modal-suite-repeat" class="input input-bordered input-sm w-full font-medium" required min="1" max="1000" placeholder="1">
+              </div>
+              
+              <div class="form-control w-full">
+                <label class="label py-1"><span class="label-text text-xs font-bold uppercase tracking-wider text-base-content/60">Min Success Rate (%)</span></label>
+                <input type="number" id="modal-suite-success" class="input input-bordered input-sm w-full font-medium" required min="1" max="100" placeholder="100">
+              </div>
+            </div>
+            
+            <div class="form-control w-full mt-3">
+              <label class="label py-1"><span class="label-text text-xs font-bold uppercase tracking-wider text-base-content/60">Max p95 Response Time Threshold (ms) - Optional</span></label>
+              <input type="number" id="modal-suite-p95" class="input input-bordered input-sm w-full font-medium" placeholder="e.g. 800 (leave blank to disable)">
+            </div>
+          </div>
+        </div>
+        
+        <div class="px-6 py-4 bg-base-content/5 border-t border-base-content/10 flex justify-end gap-2">
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-cancel-settings">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- cURL Import Modal (Glassmorphic) -->
+  <div class="modal modal-middle" id="curl-modal">
+    <div class="modal-box modal-box-glass max-w-2xl shadow-2xl p-0 overflow-hidden">
+      <div class="flex justify-between items-center px-6 py-4 border-b border-base-content/10">
+        <h2 class="text-sm font-bold uppercase tracking-wider text-base-content font-heading">Import API Case from cURL</h2>
+        <button class="btn btn-ghost btn-sm btn-circle text-lg" id="curl-close">✕</button>
+      </div>
+      <form id="curl-form">
+        <div class="p-6 flex flex-col gap-4">
+          <p class="text-xs text-base-content/60 leading-relaxed">
+            Paste a standard `curl` command below. The builder will automatically parse the method, URL, headers, and request body parameters, and add a new card to your suite.
+          </p>
+          <div class="form-control w-full">
+            <label class="label py-1"><span class="label-text text-xs font-bold uppercase tracking-wider text-base-content/60">cURL Command</span></label>
+            <textarea id="modal-curl-textarea" class="textarea textarea-bordered h-48 font-mono text-xs shadow-inner w-full" required placeholder="curl --location 'https://api.example.com/v1/endpoint' \&#10;  --header 'Content-Type: application/json' \&#10;  --header 'Authorization: Bearer &lt;YOUR_TOKEN&gt;' \&#10;  --data-raw '{&#10;    &quot;key&quot;: &quot;value&quot;&#10;  }'"></textarea>
+          </div>
+        </div>
+        <div class="px-6 py-4 bg-base-content/5 border-t border-base-content/10 flex justify-end gap-2">
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-cancel-curl">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Parse and Import</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Live JSON Drawer Overlay (Tailwind sliding panel) -->
+  <div class="fixed top-0 right-0 h-screen w-[500px] max-w-full bg-base-100 border-l border-base-200 shadow-2xl z-50 flex flex-col transition-all duration-300 transform translate-x-full" id="json-drawer">
+    <div class="flex justify-between items-center px-6 py-4 border-b border-base-200 flex-shrink-0">
+      <h2 class="text-sm font-bold uppercase tracking-wider text-base-content font-heading">Live Suite JSON Preview</h2>
+      <button class="btn btn-ghost btn-sm btn-circle text-lg" id="drawer-close">✕</button>
+    </div>
+    <div class="p-6 flex-1 flex flex-col gap-4 overflow-hidden">
+      <p class="text-xs text-base-content/60 leading-relaxed flex-shrink-0">
+        This updates in real-time as you modify details and can be copied or saved directly into a suite file.
+      </p>
+      <div class="json-pre-container flex-1 bg-base-300/30 border border-base-200 rounded-lg p-4 overflow-auto">
+        <pre><code class="json-pre-code text-xs font-mono text-base-content leading-relaxed" id="live-json-preview"></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Confirmation Modal (Glassmorphic) -->
+  <div class="modal modal-middle" id="confirm-modal">
+    <div class="modal-box modal-box-glass max-w-sm shadow-2xl p-0 overflow-hidden">
+      <div class="px-6 py-5 flex flex-col gap-2">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-base-content font-heading flex items-center gap-1.5">
+          ⚠️ Confirm Action
+        </h3>
+        <p class="text-xs text-base-content/70 leading-relaxed" id="confirm-modal-message">
+          Are you sure you want to perform this action?
+        </p>
+      </div>
+      <div class="px-6 py-3 bg-base-content/5 border-t border-base-content/10 flex justify-end gap-2">
+        <button type="button" class="btn btn-ghost btn-sm" id="btn-confirm-cancel">Cancel</button>
+        <button type="button" class="btn btn-error btn-sm" id="btn-confirm-ok">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notification container -->
+  <div class="toast toast-end toast-bottom z-[100] gap-2 p-4" id="toast-container"></div>
+
+  <!-- Main scripts -->
+  <script src="suite_builder.js"></script>
+</body>
+</html>

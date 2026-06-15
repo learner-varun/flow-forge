@@ -1,0 +1,36 @@
+{
+  "name": "Sample Suite JSON",
+  "environment": "Prod",
+  "base_url": "https://www.sample-url.in",
+  "timeout_seconds": 10,
+  "verify_ssl": true,
+  "defaults": {
+    "repeat": 1,
+    "min_success_rate": 100
+  },
+  "cases": [
+    {
+      "id": "case_1",
+      "name": "Sample API",
+      "method": "GET",
+      "endpoint": "/api/test",
+      "headers": {
+        "header2": "3",
+        "header1": "1"
+      },
+      "params": {
+        "param1": "1",
+        "param2": "2"
+      },
+      "extract": {
+        "test_variable": "$.data.test"
+      },
+      "assertions": [
+        {
+          "type": "status_code",
+          "expected": "200"
+        }
+      ]
+    }
+  ]
+}

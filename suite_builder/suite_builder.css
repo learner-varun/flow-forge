@@ -1,0 +1,392 @@
+/* Premium Background Design System - Kinetic Flow style */
+.bg-grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(rgba(0, 88, 190, 0.03) 1.5px, transparent 1.5px);
+  background-size: 28px 28px;
+  z-index: -2;
+  pointer-events: none;
+}
+
+.bg-blob-1 {
+  position: fixed;
+  top: -10%;
+  right: -10%;
+  width: 50vw;
+  height: 50vw;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 88, 190, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+  filter: blur(80px);
+  z-index: -1;
+  pointer-events: none;
+  animation: float-slow 25s infinite alternate ease-in-out;
+}
+
+.bg-blob-2 {
+  position: fixed;
+  bottom: -10%;
+  left: -10%;
+  width: 45vw;
+  height: 45vw;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(159, 66, 0, 0.03) 0%, rgba(255, 255, 255, 0) 70%);
+  filter: blur(80px);
+  z-index: -1;
+  pointer-events: none;
+  animation: float-slow 20s infinite alternate-reverse ease-in-out;
+}
+
+@keyframes float-slow {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(50px, 50px) scale(1.1); }
+}
+
+/* Scrollbar styling inspired by the portfolio */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(108, 123, 108, 0.2); /* outline color */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(108, 123, 108, 0.4);
+}
+
+body {
+  font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-attachment: fixed;
+  background-color: #f9f9ff !important; /* surface color */
+  color: #111c2d !important; /* on-surface */
+}
+
+pre, code {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* custom heading font class selector */
+.font-heading {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Modal Open classes */
+.modal.active {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.modal.active > .modal-box {
+  transform: scale(1);
+}
+
+/* Custom CSS Transition overlays for side drawer */
+#json-drawer {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#json-drawer.active {
+  transform: translateX(0);
+}
+
+/* Kinetic Flow Elevation and Shadows for API Cards */
+.case-card {
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.25s ease;
+  border-radius: 1rem !important; /* lg: 1rem */
+  background-color: #ffffff !important;
+  border: 1px solid #dee8ff !important; /* surface-container-high */
+  box-shadow: 0 4px 20px rgba(0, 88, 190, 0.05) !important; /* Focus Blue ambient shadow */
+}
+
+.case-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 88, 190, 0.08) !important;
+  border-color: rgba(0, 88, 190, 0.3) !important;
+}
+
+.case-card:focus-within {
+  border-color: #0058be !important; /* Focus Blue */
+  box-shadow: inset 0 2px 4px rgba(0, 88, 190, 0.06), 0 4px 20px rgba(0, 88, 190, 0.05) !important;
+}
+
+/* Completed glow effect (Achievement Green) */
+.completed-glow {
+  box-shadow: 0 0 15px rgba(0, 109, 52, 0.25), 0 4px 20px rgba(0, 88, 190, 0.05) !important;
+  border-color: rgba(0, 109, 52, 0.45) !important;
+}
+
+/* Custom Glassmorphic Modals with design tokens */
+.modal-box {
+  border-radius: 1rem !important; /* lg */
+  border: 1px solid #dee8ff !important;
+  box-shadow: 0 12px 40px rgba(0, 88, 190, 0.12) !important;
+  background-color: #ffffff !important;
+}
+
+/* Input, Textarea, Select Focus Styling */
+.input:focus, .textarea:focus, .select:focus {
+  border-width: 2px !important;
+  border-color: #0058be !important; /* Focus Blue */
+  background-color: #f0f3ff !important; /* Light blue tint */
+  outline: 2px solid transparent !important;
+  outline-offset: 2px !important;
+}
+
+/* Global button scale transform on click (Tactile Feedback) */
+.btn:active, .card-tab-btn:active, .custom-checkbox-container:active {
+  transform: scale(0.95) !important;
+}
+
+/* Custom Circular Checkbox for completed states */
+.custom-checkbox-container {
+  display: block;
+  position: relative;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  transition: transform 0.1s ease;
+}
+
+.custom-checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 24px;
+  width: 24px;
+  background-color: #ffffff;
+  border: 2px solid #bbcbba; /* outline-variant */
+  border-radius: 50%;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.custom-checkbox-container:hover input ~ .checkmark {
+  border-color: #0058be; /* Focus Blue */
+  background-color: #f0f3ff;
+}
+
+.custom-checkbox-container input:checked ~ .checkmark {
+  background-color: #006d34; /* Achievement Green */
+  border-color: #006d34;
+  box-shadow: 0 0 8px rgba(0, 109, 52, 0.4);
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.custom-checkbox-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.custom-checkbox-container .checkmark:after {
+  left: 8px;
+  top: 4px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Kinetic Flow Custom Button Redefinitions */
+.btn-primary {
+  background: linear-gradient(180deg, #009447 0%, #006d34 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 2px 4px rgba(0, 109, 52, 0.2) !important;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(180deg, #00a34e 0%, #007c3b 100%) !important;
+  box-shadow: 0 4px 8px rgba(0, 109, 52, 0.3) !important;
+}
+
+.btn-secondary {
+  background: #0058be !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 2px 4px rgba(0, 88, 190, 0.2) !important;
+}
+
+.btn-secondary:hover {
+  background: #004da7 !important;
+  box-shadow: 0 4px 8px rgba(0, 88, 190, 0.3) !important;
+}
+
+.btn-outline.btn-primary {
+  background: transparent !important;
+  color: #006d34 !important;
+  border: 1px solid #006d34 !important;
+}
+
+.btn-outline.btn-primary:hover {
+  background: rgba(0, 109, 52, 0.05) !important;
+  color: #006d34 !important;
+  border-color: #006d34 !important;
+}
+
+.btn-outline.btn-secondary {
+  background: transparent !important;
+  color: #0058be !important;
+  border: 1px solid #0058be !important;
+}
+
+.btn-outline.btn-secondary:hover {
+  background: rgba(0, 88, 190, 0.05) !important;
+  color: #0058be !important;
+  border-color: #0058be !important;
+}
+
+/* Kinetic Flow Custom Badge Styles */
+.badge-primary {
+  background-color: #006d34 !important;
+  color: #ffffff !important;
+  border-color: #006d34 !important;
+}
+
+.badge-secondary {
+  background-color: #0058be !important;
+  color: #ffffff !important;
+  border-color: #0058be !important;
+}
+
+.badge-neutral {
+  background-color: #263143 !important; /* inverse-surface */
+  color: #ffffff !important;
+  border-color: #263143 !important;
+}
+
+/* Small Win Chips (Low-saturation brand color variations) */
+.chip-green {
+  background-color: #e2f7ea !important;
+  color: #005226 !important; /* on-primary-fixed-variant */
+  border: 1px solid #bbcbba !important;
+}
+
+.chip-blue {
+  background-color: #e7eeff !important;
+  color: #004395 !important; /* on-secondary-fixed-variant */
+  border: 1px solid #dee8ff !important;
+}
+
+.chip-orange {
+  background-color: #ffece2 !important;
+  color: #793100 !important; /* on-tertiary-fixed-variant */
+  border: 1px solid #ffdbcb !important;
+}
+
+/* ── Variable Autocomplete Dropdown ─────────────────────────────────────── */
+#var-autocomplete {
+  position: fixed;
+  z-index: 99999;
+  background: #ffffff;
+  border: 1.5px solid #dee8ff;
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0, 88, 190, 0.14), 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  max-height: 220px;
+  overflow-y: auto;
+  min-width: 180px;
+  animation: var-ac-in 0.12s ease;
+}
+
+@keyframes var-ac-in {
+  from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.var-ac-header {
+  padding: 5px 10px 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6c7b6c;
+  background: #f0f3ff;
+  border-bottom: 1px solid #dee8ff;
+}
+
+.var-ac-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  color: #111c2d;
+  cursor: pointer;
+  transition: background 0.1s ease, color 0.1s ease;
+  border-bottom: 1px solid #f0f3ff;
+}
+.var-ac-item:last-child { border-bottom: none; }
+
+.var-ac-item:hover,
+.var-ac-item.active {
+  background: #e7eeff;
+  color: #0058be;
+}
+
+.var-ac-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  background: #e7eeff;
+  color: #0058be;
+  border: 1px solid #dee8ff;
+  border-radius: 4px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+  letter-spacing: 0.04em;
+}
+
+.var-ac-item.active .var-ac-pill {
+  background: #0058be;
+  color: #ffffff;
+  border-color: #0058be;
+}
+
+.var-ac-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.var-ac-hint {
+  font-size: 10px;
+  color: #6c7b6c;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.var-ac-empty {
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #6c7b6c;
+  font-style: italic;
+}
+
