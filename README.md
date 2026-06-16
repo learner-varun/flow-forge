@@ -1,8 +1,10 @@
+<img width="1438" height="649" alt="Screenshot 2026-06-16 at 10 26 23 PM" src="https://github.com/user-attachments/assets/b812c498-64ae-4c40-b0c0-1691e0fab59b" />
 # FlowForge & Python API Automation Framework
 
 FlowForge is a visual API Test Suite Builder paired with a robust Python automation framework. It allows you to **visually design** API tests, configure environments, map dependencies between requests, and execute them to generate beautiful standalone HTML reports.
 
-![FlowForge Suite Builder Placeholder](/path/to/your/flowforge-screenshot.png) <!-- Replace with actual screenshot path -->
+<img width="1438" height="649" alt="Screenshot 2026-06-16 at 10 26 23 PM" src="https://github.com/user-attachments/assets/f78fa8d2-6905-4749-9def-8092c9bb542a" /> <!-- Replace with actual screenshot path -->
+
 
 ## Core Features
 
