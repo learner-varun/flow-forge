@@ -11,9 +11,19 @@ from .metrics import timing_summary
 from .report import write_html_report
 
 
+import re
+
 def _interpolate(val: Any, variables: Dict[str, Any]) -> Any:
     if isinstance(val, str):
         result = val
+        
+        # Resolve {{env.VAR_NAME}} from system environment
+        def _env_replacer(match):
+            return os.environ.get(match.group(1), match.group(0))
+            
+        result = re.sub(r"\{\{env\.([^}]+)\}\}", _env_replacer, result)
+        
+        # Resolve {{var_name}} from extracted variables
         for k, v in variables.items():
             placeholder = f"{{{{{k}}}}}"
             if placeholder in result:

@@ -63,6 +63,27 @@ Open this HTML file in your browser to view the detailed results.
 
 ---
 
+## 🧪 Converting to JMeter (JMX)
+
+You can convert any exported JSON test suite into a JMeter-compatible `.jmx` file using the conversion tool. This lets you seamlessly transition from visual regression/functional checks to load testing in Apache JMeter.
+
+### Run the Converter
+
+```bash
+python3 json_to_jmx.py suites/my_test_suite.json -o suites/my_test_suite.jmx
+```
+
+*Note: If `-o`/`--output` is omitted, the script automatically generates a JMX file in the same directory with a `.jmx` extension.*
+
+### Supported Mapping Logic
+
+- **Placeholder Conversion**: Translates `{{variable}}` to JMeter `${variable}` and `{{env.VAR_NAME}}` to `${__groovy(System.getenv('VAR_NAME'))}` for runtime environment access.
+- **Request Body & Payloads**: Fully maps raw JSON, form data, and multipart/file-upload fields (including automated MIME type guessing).
+- **Assertions**: Converts all framework assertions (status code, headers, duration SLA, body match, JSON paths, and JSON datatypes) into native JMeter assertions (or JSR223 Groovy assertions for complex logic).
+- **Listeners & Setup**: Injects default variables, a cookie manager, a header manager, and a pre-configured **View Results Tree** listener for immediate GUI debugging.
+
+---
+
 ## 📋 Assertions Engine
 
 FlowForge and the Python runner support a wide array of built-in assertions:
@@ -94,5 +115,6 @@ FlowForge and the Python runner support a wide array of built-in assertions:
 ├── suites/              # Saved JSON Test Suites go here
 ├── reports/             # Generated HTML execution reports
 ├── run_api_tests.py     # Main CLI entrypoint
+├── json_to_jmx.py       # JMX converter script
 └── .gitignore
 ```
