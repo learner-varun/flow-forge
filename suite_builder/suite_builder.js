@@ -486,10 +486,25 @@ function renderAssertionsRows(caseIdx) {
         <input type="text" class="input input-bordered input-sm flex-1 font-mono text-xs assert-path" placeholder="JSON Path" value="${escapeHtml(assertion.path || '')}" data-case="${caseIdx}" data-assert="${aIdx}">
       `;
     } 
-    else if (type === "json_path_equals" || type === "json_path_contains" || type === "json_path_type") {
+    else if (type === "json_path_equals" || type === "json_path_contains") {
       innerFields = `
         <input type="text" class="input input-bordered input-sm flex-1 font-mono text-xs assert-path" placeholder="JSON Path" value="${escapeHtml(assertion.path || '')}" data-case="${caseIdx}" data-assert="${aIdx}">
         <input type="text" class="input input-bordered input-sm flex-1 font-mono text-xs assert-expected" placeholder="Expected Value" value="${escapeHtml(assertion.expected || '')}" data-case="${caseIdx}" data-assert="${aIdx}">
+      `;
+    }
+    else if (type === "json_path_type") {
+      const expVal = assertion.expected || "string";
+      innerFields = `
+        <input type="text" class="input input-bordered input-sm flex-1 font-mono text-xs assert-path" placeholder="JSON Path" value="${escapeHtml(assertion.path || '')}" data-case="${caseIdx}" data-assert="${aIdx}">
+        <select class="select select-bordered select-sm flex-1 font-mono text-xs assert-expected" data-case="${caseIdx}" data-assert="${aIdx}">
+          <option value="string" ${expVal === 'string' ? 'selected' : ''}>string</option>
+          <option value="integer" ${expVal === 'integer' ? 'selected' : ''}>integer</option>
+          <option value="number" ${expVal === 'number' ? 'selected' : ''}>number</option>
+          <option value="boolean" ${expVal === 'boolean' ? 'selected' : ''}>boolean</option>
+          <option value="array" ${expVal === 'array' ? 'selected' : ''}>array</option>
+          <option value="object" ${expVal === 'object' ? 'selected' : ''}>object</option>
+          <option value="null" ${expVal === 'null' ? 'selected' : ''}>null</option>
+        </select>
       `;
     }
     
