@@ -60,7 +60,8 @@ API checks passed: X of Y cases passed.
 ```
 Open this HTML file in your browser to view the detailed results.
 
-![Kinetic Flow Report Placeholder](/path/to/your/report-screenshot.png) <!-- Replace with actual screenshot path -->
+<img width="866" height="651" alt="Screenshot 2026-06-16 at 10 35 14 PM" src="https://github.com/user-attachments/assets/1b27a580-1c5c-4d74-842e-fcd7991186e0" />
+
 
 ---
 
