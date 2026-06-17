@@ -84,6 +84,35 @@ python3 json_to_jmx.py suites/my_test_suite.json -o suites/my_test_suite.jmx
 
 ---
 
+## 🦗 Converting to Locust (Python)
+
+You can convert any exported JSON test suite into a Locust load testing python script using the conversion tool. This lets you run scalable load tests written in Python.
+
+### Run the Converter
+
+```bash
+python3 json_to_locust.py suites/my_test_suite.json -o suites/my_locust_script.py
+```
+
+*Note: If `-o`/`--output` is omitted, the script automatically generates a python file in the same directory with a `_locust.py` suffix.*
+
+### Executing with Locust
+
+Once generated, run Locust against the script:
+
+```bash
+locust -f suites/my_locust_script.py
+```
+
+### Supported Mapping Logic
+
+- **Sequential Task flow**: Runs the entire sequence of test cases in order inside a single Locust `@task`.
+- **Dynamic Variables**: Keeps track of extracted variables in a `session_vars` dictionary and resolves placeholders at runtime.
+- **Robust File Uploads**: Safe handling of file resources in a `try...finally` block, ensuring file descriptors are cleanly closed during execution.
+- **Locust Metrics Integration**: Asserts responses and marks successes or failures directly inside the Locust execution framework.
+
+---
+
 ## 📋 Assertions Engine
 
 FlowForge and the Python runner support a wide array of built-in assertions:
@@ -116,5 +145,6 @@ FlowForge and the Python runner support a wide array of built-in assertions:
 ├── reports/             # Generated HTML execution reports
 ├── run_api_tests.py     # Main CLI entrypoint
 ├── json_to_jmx.py       # JMX converter script
+├── json_to_locust.py    # Locust converter script
 └── .gitignore
 ```
