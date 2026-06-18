@@ -477,6 +477,9 @@ def build_assertions(case):
             assertions_elements.append(build_json_path_contains_assertion(path, expected))
         elif kind == "json_path_type":
             assertions_elements.append(build_json_path_type_assertion(path, expected))
+        elif kind == "json_schema":
+            # Explicitly excluded from JMX generation
+            pass
             
     return assertions_elements
 

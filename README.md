@@ -129,6 +129,7 @@ FlowForge and the Python runner support a wide array of built-in assertions:
 | `json_path_equals` | Validates the exact value of a JSON path. |
 | `json_path_contains` | Checks if a JSON path string contains expected text. |
 | `json_path_type` | Validates structural types (`string`, `integer`, `boolean`, `array`, `object`). |
+| `json_schema` | Validates response JSON body against a JSON Schema (upload schema file or paste in builder). |
 
 ---
 

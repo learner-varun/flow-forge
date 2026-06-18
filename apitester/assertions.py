@@ -96,6 +96,32 @@ def evaluate_assertions(
                 found, actual = extract_json_path(json_body, assertion.get("path", ""))
                 passed = found and _type_name(actual) == expected
                 actual = _type_name(actual) if found else None
+            elif kind == "json_schema":
+                if json_body is None:
+                    passed = False
+                    message = "Response body is not valid JSON or is empty"
+                else:
+                    schema = expected
+                    if isinstance(schema, str):
+                        try:
+                            schema = json.loads(schema)
+                        except Exception as e:
+                            raise ValueError(f"Invalid JSON schema string: {e}")
+                    try:
+                        import jsonschema
+                        jsonschema.validate(instance=json_body, schema=schema)
+                        passed = True
+                        actual = "Valid JSON according to schema"
+                    except ImportError:
+                        passed = False
+                        message = "jsonschema library is not installed in the virtual environment"
+                        actual = None
+                    except jsonschema.exceptions.ValidationError as err:
+                        passed = False
+                        path_str = " -> ".join(str(p) for p in err.absolute_path)
+                        path_suffix = f" at path '{path_str}'" if path_str else ""
+                        message = f"Schema validation failed: {err.message}{path_suffix}"
+                        actual = json_body
             else:
                 message = f"Unknown assertion type: {kind}"
         except Exception as exc:
