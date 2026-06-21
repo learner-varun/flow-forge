@@ -465,10 +465,15 @@ function renderAssertionsRows(caseIdx) {
   
   assertions.forEach((assertion, aIdx) => {
     const row = document.createElement("div");
-    row.className = "flex gap-2 items-center assertion-row";
+    const type = assertion.type;
+    
+    if (type === "json_schema") {
+      row.className = "flex gap-2 items-start assertion-row w-full flex-wrap sm:flex-nowrap mb-2";
+    } else {
+      row.className = "flex gap-2 items-center assertion-row w-full";
+    }
     
     let innerFields = "";
-    const type = assertion.type;
     
     if (type === "status_code" || type === "response_time_under_ms" || type === "body_contains") {
       innerFields = `
@@ -507,6 +512,21 @@ function renderAssertionsRows(caseIdx) {
         </select>
       `;
     }
+    else if (type === "json_schema") {
+      const expVal = assertion.expected ? (typeof assertion.expected === 'string' ? assertion.expected : JSON.stringify(assertion.expected, null, 2)) : '';
+      innerFields = `
+        <div class="flex flex-col gap-1.5 flex-1 min-w-0 bg-base-200/40 p-2.5 rounded border border-base-300">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-[10px] text-base-content/50 uppercase font-semibold">JSON Schema</span>
+            <label class="btn btn-[10px] btn-outline btn-primary h-6 min-h-6 py-0.5 px-2 cursor-pointer font-semibold font-heading text-[10px] flex items-center justify-center">
+              <span>📤</span> Upload Schema File
+              <input type="file" accept=".json" class="hidden assert-schema-upload" data-case="${caseIdx}" data-assert="${aIdx}">
+            </label>
+          </div>
+          <textarea class="textarea textarea-bordered font-mono text-[11px] w-full h-24 assert-expected leading-tight py-1.5 px-2 shadow-inner" placeholder='Paste JSON Schema here (e.g. { "type": "object" })' data-case="${caseIdx}" data-assert="${aIdx}">${escapeHtml(expVal)}</textarea>
+        </div>
+      `;
+    }
     
     row.innerHTML = `
       <select class="select select-bordered select-sm w-44 assert-type-select text-xs font-semibold" data-case="${caseIdx}" data-assert="${aIdx}">
@@ -516,11 +536,12 @@ function renderAssertionsRows(caseIdx) {
         <option value="json_path_equals" ${type === 'json_path_equals' ? 'selected' : ''}>json_path_equals</option>
         <option value="json_path_contains" ${type === 'json_path_contains' ? 'selected' : ''}>json_path_contains</option>
         <option value="json_path_type" ${type === 'json_path_type' ? 'selected' : ''}>json_path_type</option>
+        <option value="json_schema" ${type === 'json_schema' ? 'selected' : ''}>json_schema</option>
         <option value="header_contains" ${type === 'header_contains' ? 'selected' : ''}>header_contains</option>
         <option value="body_contains" ${type === 'body_contains' ? 'selected' : ''}>body_contains</option>
       </select>
       ${innerFields}
-      <button class="btn btn-ghost btn-xs btn-circle text-base-content/40 hover:text-error btn-assertion-delete" title="Delete assertion" data-case="${caseIdx}" data-assert="${aIdx}">✕</button>
+      <button class="btn btn-ghost btn-xs btn-circle text-base-content/40 hover:text-error btn-assertion-delete flex-shrink-0" title="Delete assertion" data-case="${caseIdx}" data-assert="${aIdx}">✕</button>
     `;
     
     container.appendChild(row);
@@ -602,6 +623,9 @@ function attachAssertionHandlers(container, caseIdx) {
       if (type === "status_code" || type === "response_time_under_ms" || type === "body_contains") {
         delete assertion.path;
         assertion.expected = assertion.expected || "";
+      } else if (type === "json_schema") {
+        delete assertion.path;
+        assertion.expected = assertion.expected || "";
       } else if (type === "json_path_exists") {
         assertion.path = assertion.path || "";
         delete assertion.expected;
@@ -626,15 +650,50 @@ function attachAssertionHandlers(container, caseIdx) {
     if (expectedInput) {
       expectedInput.addEventListener("input", (e) => {
         const val = e.target.value;
-        // Try parsing numbers/bools in assertions expected, otherwise keep string
-        let parsedVal = val;
-        if (val === "true") parsedVal = true;
-        else if (val === "false") parsedVal = false;
-        else if (val !== "" && !isNaN(val)) parsedVal = Number(val);
+        const assertion = suite.cases[caseIdx].assertions[aIdx];
         
-        suite.cases[caseIdx].assertions[aIdx].expected = parsedVal;
+        let parsedVal = val;
+        if (assertion.type === "json_schema") {
+          try {
+            parsedVal = JSON.parse(val);
+          } catch (err) {
+            parsedVal = val;
+          }
+        } else {
+          // Try parsing numbers/bools in assertions expected, otherwise keep string
+          if (val === "true") parsedVal = true;
+          else if (val === "false") parsedVal = false;
+          else if (val !== "" && !isNaN(val)) parsedVal = Number(val);
+        }
+        
+        assertion.expected = parsedVal;
         updateLiveJsonPreview();
         analyzeVariables();
+      });
+    }
+    
+    const schemaUpload = row.querySelector(".assert-schema-upload");
+    if (schemaUpload) {
+      schemaUpload.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (evt) => {
+            try {
+              const text = evt.target.result;
+              const parsed = JSON.parse(text);
+              suite.cases[caseIdx].assertions[aIdx].expected = parsed;
+              
+              renderAssertionsRows(caseIdx);
+              updateLiveJsonPreview();
+              analyzeVariables();
+              showToast(`Schema successfully loaded from ${file.name}!`, "success");
+            } catch (err) {
+              showToast("Invalid JSON file. Please upload a valid JSON Schema.", "error");
+            }
+          };
+          reader.readAsText(file);
+        }
       });
     }
     
@@ -984,7 +1043,13 @@ function analyzeVariables() {
     if (c.assertions) {
       c.assertions.forEach(assertion => {
         if (assertion.path) textToScan.push(String(assertion.path));
-        if (assertion.expected) textToScan.push(String(assertion.expected));
+        if (assertion.expected) {
+          if (typeof assertion.expected === "object") {
+            textToScan.push(JSON.stringify(assertion.expected));
+          } else {
+            textToScan.push(String(assertion.expected));
+          }
+        }
       });
     }
     
